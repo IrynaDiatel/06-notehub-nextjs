@@ -1,0 +1,44 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+
+.topBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.addBtn {
+  padding: 10px 20px;
+  background-color: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.addBtn:hover {
+  background-color: #6d28d9;
+}
