@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import Modal from "@/components/Modal/Modal";
@@ -21,6 +21,7 @@ export default function Notes() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["notes", search, page],
     queryFn: () => fetchNotes({ page, search }),
+    placeholderData: (previousData) => previousData,
   });
 
   const handleSearch = useDebouncedCallback((query: string) => {
@@ -45,7 +46,7 @@ export default function Notes() {
       <div className={css.topBar}>
         <h1 className={css.heading}>My Notes</h1>
         <div className={css.controls}>
-          <SearchBar value={search} onSearch={handleSearch} />
+          <SearchBox value={search} onSearch={handleSearch} />
           <button className={css.addBtn} onClick={() => setShowForm(true)}>
             + Add Note
           </button>
