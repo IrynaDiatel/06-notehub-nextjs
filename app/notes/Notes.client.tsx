@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
 import SearchBar from "@/components/SearchBar/SearchBar";
 import Pagination from "@/components/Pagination/Pagination";
 import NoteForm from "@/components/NoteForm/NoteForm";
+import Modal from "@/components/Modal/Modal";
 import css from "./notes.module.css";
 
-interface NotesProps {
-  initialSearch: string;
-  initialPage: number;
-}
-
-export default function Notes({ initialSearch, initialPage }: NotesProps) {
+export default function Notes() {
   const router = useRouter();
-  const [search, setSearch] = useState(initialSearch);
-  const [page, setPage] = useState(initialPage);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
@@ -26,14 +23,14 @@ export default function Notes({ initialSearch, initialPage }: NotesProps) {
     queryFn: () => fetchNotes({ page, search }),
   });
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useDebouncedCallback((query: string) => {
     setSearch(query);
     setPage(1);
     const params = new URLSearchParams();
     if (query) params.set("search", query);
     params.set("page", "1");
     router.push(`/notes?${params.toString()}`);
-  };
+  }, 300);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -63,15 +60,21 @@ export default function Notes({ initialSearch, initialPage }: NotesProps) {
       {data && (
         <>
           <NoteList notes={data.notes} />
-          <Pagination
-            pageCount={data.totalPages}
-            currentPage={page}
-            onPageChange={handlePageChange}
-          />
+          {data.totalPages > 1 && (
+            <Pagination
+              pageCount={data.totalPages}
+              currentPage={page}
+              onPageChange={handlePageChange}
+            />
+          )}
         </>
       )}
 
-      {showForm && <NoteForm onClose={() => setShowForm(false)} />}
+      {showForm && (
+        <Modal onClose={() => setShowForm(false)}>
+          <NoteForm onClose={() => setShowForm(false)} />
+        </Modal>
+      )}
     </div>
   );
 }
